@@ -9,21 +9,26 @@ import (
 func TestGossie(t *testing.T) {
 	var keyspace = "hecunatest"
 	var colspace = "snps"
-	pool, err := gossie.NewConnectionPool([]string{"localhost:9160"}, keyspace, gossie.PoolOptions{Size: 50, Timeout: 3000})
+	pool, err :=
+gossie.NewConnectionPool([]string{"127.0.0.1:9160"}, keyspace, gossie.PoolOptions{Size: 1, Timeout: 30000})
+	if err != nil {
+		exitMsg(fmt.Sprint("Connecting: ", err))
+	}
+	fmt.Println("Connected to keyspace ", keyspace)
 
 	var mapping, mappingErr = gossie.NewMapping(&SNP{})
 	if mappingErr != nil {
 		exitMsg(fmt.Sprint("mapping: ", mappingErr))
 	}
 
-	var snpObj = &SNP{12, "does nothing", "C", "CAT"}
+	var snpObj = &SNP{"testkey", "does nothing", "C", "CAT"}
 	var testSNP, mapErr = mapping.Map(snpObj)
 	if mapErr != nil {
 		exitMsg("Can't map value.")
 	}
 	err = pool.Writer().Insert(colspace, testSNP).Run()
 	if err != nil {
-		fmt.Println("Failed.")
+		exitMsg(fmt.Sprint("Couldn't write: ", err))
 	}
 	fmt.Println("Connected.")
 	var query = pool.Query(mapping)

@@ -1,11 +1,9 @@
 package main
 
 import (
-	"os"
 	"math/rand"
 	"strings"
 	"bytes"
-	"log"
 	"fmt"
 )
 
@@ -14,7 +12,7 @@ const (
 )
 
 type SNP struct {
-	GeneID int `cf:"snps" key:"GeneID" cols:"Description,Value,Alleles"`
+	GeneID string `cf:"snps" key:"GeneID" cols:"Description,Value,Alleles"`
 	Description string
 	Value string
 	Alleles string
@@ -22,11 +20,6 @@ type SNP struct {
 
 func (snp SNP) String() string {
 	return fmt.Sprintf("%d: %s (%s) - %s", snp.GeneID, snp.Value, snp.Alleles, snp.Description)
-}
-
-func exitMsg(msg string) {
-	log.Println("Fatal:", msg)
-	os.Exit(1)
 }
 
 func genRandomString(length int) string {
@@ -57,8 +50,8 @@ func genAlleles(base string) string {
 	return alleleBuffer.String()
 }
 
-func genSNP() *SNP {
-	id := rand.Int()
+func genSNP(keyPrefix string) *SNP {
+	id := keyPrefix //+  genRandomString(rand.Intn(64))
 	description := genRandomString(rand.Intn(2048))
 	value := genSNPValue()
 	alleles := genAlleles(value)
@@ -66,11 +59,4 @@ func genSNP() *SNP {
 	return datum
 }
 
-func testSNPGeneration() {
-
-	for i := 0; i < 100; i++ {
-		snp := genSNP()
-		fmt.Println(snp, "\n")
-	}
-}
 
