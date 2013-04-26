@@ -1,0 +1,2 @@
+use hecunatest;
+drop column family snps;

@@ -7,7 +7,7 @@ import (
 
 func TestSNPGeneration(t *testing.T) {
 	for i := 0; i < 5; i++ {
-		snp := genSNP("this-is-a-prefix")
+		snp := genSNP()
 		fmt.Println(snp, "\n")
 	}
 }

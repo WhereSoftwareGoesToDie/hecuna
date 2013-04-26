@@ -7,9 +7,8 @@ use hecunatest;
 
 create column family snps
   with column_type = 'Standard'
-  and comparator = 'UTF8Type'
-  and default_validation_class = 'UTF8Type'
-  and key_validation_class = 'UTF8Type'
+  and comparator = 'BytesType'
+  and key_validation_class = 'BytesType'
   and read_repair_chance = 1.0
   and dclocal_read_repair_chance = 0.0
   and gc_grace = 864000

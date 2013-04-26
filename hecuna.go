@@ -32,7 +32,7 @@ func benchmark(pool gossie.ConnectionPool, recordCount int,
 readStartDelay int, keyspace string, columnfamily string) (int64, int64) {
 	importSnps := make([]*SNP, recordCount)
 	for i := 0; i < recordCount; i++ {
-		importSnps[i] = genSNP("")
+		importSnps[i] = genSNP()
 	}
 	startWriteTime := time.Now().UTC()
 
@@ -40,13 +40,14 @@ readStartDelay int, keyspace string, columnfamily string) (int64, int64) {
 	if err != nil {
 		exitMsg(fmt.Sprint("Creating mapping - ", err))
 	}
-	testSnp := genSNP("hecuna")
+	testSnp := genSNP()
 	var snpRow *gossie.Row
 	snpRow, err = mapping.Map(testSnp)
 	if err != nil {
 		exitMsg(fmt.Sprint("Mapping SNP - ", err))
 	}
-	err = pool.Writer().Insert(columnfamily, snpRow).Run()
+	mutation := pool.Writer().Insert(columnfamily, snpRow)
+	err = mutation.Run()
 	if err != nil {
 		exitMsg(fmt.Sprint("Write - ", err))
 	}
