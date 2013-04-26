@@ -51,7 +51,7 @@ func genAlleles(base string) string {
 }
 
 func genSNP(keyPrefix string) *SNP {
-	id := keyPrefix //+  genRandomString(rand.Intn(64))
+	id := keyPrefix +  genRandomString(rand.Intn(64))
 	description := genRandomString(rand.Intn(2048))
 	value := genSNPValue()
 	alleles := genAlleles(value)

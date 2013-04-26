@@ -30,18 +30,13 @@ func deltaNanoSeconds(x, y time.Time) int64 {
 
 func benchmark(pool gossie.ConnectionPool, recordCount int,
 readStartDelay int, keyspace string, columnfamily string) (int64, int64) {
-	var mapping gossie.Mapping
-
 	importSnps := make([]*SNP, recordCount)
 	for i := 0; i < recordCount; i++ {
-		importSnps[i] = genSNP("hecuna-")
+		importSnps[i] = genSNP("")
 	}
 	startWriteTime := time.Now().UTC()
-	pool, err := gossie.NewConnectionPool([]string{"localhost:9160"}, keyspace, gossie.PoolOptions{Size: 50, Timeout: 3000})
-	if err != nil {
-		exitMsg(fmt.Sprint("Creating connection pool - ", err))
-	}
-	mapping, err = gossie.NewMapping(&SNP{})
+
+	mapping, err := gossie.NewMapping(&SNP{})
 	if err != nil {
 		exitMsg(fmt.Sprint("Creating mapping - ", err))
 	}
@@ -68,22 +63,23 @@ readStartDelay int, keyspace string, columnfamily string) (int64, int64) {
 func main() {
 	rand.Seed(time.Now().UTC().UnixNano())
 
-	rowCount := 1000
-	keySpace := "hecunatest"
-	colFamily := "snps"
-
 	hostList := flag.String("hosts", "localhost:9160","Comma-separated list of host:port pairs, e.g., localhost:9160,otherhost:9161")
+	rowCount := flag.Int("rowcount", 1000, "Number of rows to write")
+	keySpace := flag.String("keyspace", "hecunatest", "Name of keyspace to write to")
+	colFamily := flag.String("colfamily", "snps", "Name of column family to write to")
+
+	flag.Parse()
 
 	hosts := strings.Split(*hostList, ",")
 	poolOptions := gossie.PoolOptions{Size: 50, Timeout: 3000}
 
-	pool, err := gossie.NewConnectionPool(hosts, keySpace, poolOptions)
+	pool, err := gossie.NewConnectionPool(hosts, *keySpace, poolOptions)
 	if err != nil {
 		exitMsg(fmt.Sprint("Connecting: ", err))
 	}
 
-	tRead, tWrite := benchmark(pool, rowCount, 0, keySpace,
-colFamily)
+	tRead, tWrite := benchmark(pool, *rowCount, 0, *keySpace,
+*colFamily)
 	fmt.Printf("Read time: %d\nWrite time: %d\n", tRead, tWrite)
 
 }
