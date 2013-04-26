@@ -3,7 +3,14 @@ hecuna - Cassandra testing and benchmarking tool
 
 Usage:
 
-hecuna <keyspace>
+hecuna [options]
+
+Options:
+
+	keyspace (hecunatest)
+	columnfamily (snps)
+	rowcount (1000)
+	hostlist (localhost:9160) (comma-separated host:port pairs)
 */
 
 package main
