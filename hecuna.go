@@ -29,7 +29,7 @@ func deltaNanoSeconds(x, y time.Time) int64 {
 }
 
 func benchmark(pool gossie.ConnectionPool, recordCount int,
-readStartDelay int, keyspace string, columnfamily string) (int64, int64) {
+readStartDelay int, keyspace string, columnfamily string) (int64, int64, int64, int64) {
 	importSnps := make([]*SNP, recordCount)
 	for i := 0; i < recordCount; i++ {
 		importSnps[i] = genSNP()
@@ -40,25 +40,40 @@ readStartDelay int, keyspace string, columnfamily string) (int64, int64) {
 	if err != nil {
 		exitMsg(fmt.Sprint("Creating mapping - ", err))
 	}
-	testSnp := genSNP()
-	var snpRow *gossie.Row
-	snpRow, err = mapping.Map(testSnp)
-	if err != nil {
-		exitMsg(fmt.Sprint("Mapping SNP - ", err))
-	}
-	mutation := pool.Writer().Insert(columnfamily, snpRow)
-	err = mutation.Run()
-	if err != nil {
-		exitMsg(fmt.Sprint("Write - ", err))
+	for _, snp := range importSnps {
+		var snpRow *gossie.Row
+		snpRow, err = mapping.Map(snp)
+		if err != nil {
+			exitMsg(fmt.Sprint("Mapping SNP - ", err))
+		}
+		mutation := pool.Writer().Insert(columnfamily, snpRow)
+		err = mutation.Run()
+		if err != nil {
+			exitMsg(fmt.Sprint("Write - ", err))
+		}
 	}
 	endWriteTime := time.Now().UTC()
 	nsWrite := deltaNanoSeconds(endWriteTime, startWriteTime)
+	avgWrite := nsWrite / int64(recordCount)
 	startReadTime := time.Now().UTC()
-	// Read
+	for _, snp := range importSnps {
+		query := pool.Query(mapping)
+		result, readErr := query.Get(snp.GeneID)
+		if readErr != nil {
+			exitMsg(fmt.Sprint("Read - ", readErr))
+		}
+		for {
+			readSnp := &SNP{}
+			err := result.Next(readSnp)
+			if err != nil {
+				break
+			}
+		}
+	}
 	endReadTime := time.Now().UTC()
-	// Read
 	nsRead := deltaNanoSeconds(endReadTime, startReadTime)
-	return nsRead, nsWrite
+	avgRead := nsRead / int64(recordCount)
+	return nsRead, nsWrite, avgRead, avgWrite
 }
 
 func main() {
@@ -79,8 +94,10 @@ func main() {
 		exitMsg(fmt.Sprint("Connecting: ", err))
 	}
 
-	tRead, tWrite := benchmark(pool, *rowCount, 0, *keySpace,
+	tRead, tWrite, avgRead, avgWrite := benchmark(pool, *rowCount, 0, *keySpace,
 *colFamily)
-	fmt.Printf("Read time: %d\nWrite time: %d\n", tRead, tWrite)
+	avgWriteSeconds := float64(avgWrite) / float64(1000000000)
+	avgReadSeconds := float64(avgRead) / float64(1000000000)
+	fmt.Printf("Read time: %v\n\tAverage (seconds): %v\nWrite time: %v\n\tAverage (seconds): %v\n", tRead, avgReadSeconds, tWrite, avgWriteSeconds)
 
 }
