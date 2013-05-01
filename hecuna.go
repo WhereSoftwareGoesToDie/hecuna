@@ -31,9 +31,6 @@ func exitMsg(msg string) {
 	os.Exit(1)
 }
 
-func deltaNanoSeconds(x, y time.Time) int64 {
-	return x.UnixNano() - y.UnixNano()
-}
 
 func benchmark(pool gossie.ConnectionPool, recordCount int,
 readStartDelay int, keyspace string, columnfamily string) (int64, int64, int64, int64) {
@@ -90,18 +87,20 @@ func main() {
 	rowCount := flag.Int("rowcount", 1000, "Number of rows to write")
 	keySpace := flag.String("keyspace", "hecunatest", "Name of keyspace to write to")
 	colFamily := flag.String("colfamily", "snps", "Name of column family to write to")
+	poolSize := flag.Int("poolsize", 50, "Number of connections in connection pool")
+	readDelay := flag.Int("readdelay", 0, "Time to wait, in milliseconds, between completing writing data and beginning to read it back")
 
 	flag.Parse()
 
 	hosts := strings.Split(*hostList, ",")
-	poolOptions := gossie.PoolOptions{Size: 50, Timeout: 3000}
+	poolOptions := gossie.PoolOptions{Size: *poolSize, Timeout: 3000}
 
 	pool, err := gossie.NewConnectionPool(hosts, *keySpace, poolOptions)
 	if err != nil {
 		exitMsg(fmt.Sprint("Connecting: ", err))
 	}
 
-	tRead, tWrite, avgRead, avgWrite := benchmark(pool, *rowCount, 0, *keySpace,
+	tRead, tWrite, avgRead, avgWrite := benchmark(pool, *rowCount, *readDelay, *keySpace,
 *colFamily)
 	avgWriteSeconds := float64(avgWrite) / float64(1000000000)
 	avgReadSeconds := float64(avgRead) / float64(1000000000)
