@@ -1,0 +1,21 @@
+hecuna
+======
+
+hecuna is a Cassandra loadtesting/benchmarking tool. At the moment it's
+pre-alpha-quality, but still usable if you don't mind a little pain.
+Written by sio; let me know if you encounter any problems.
+
+building
+========
+
+You'll need a working go 1.1 installation, plus gossie
+(https://github.com/carloscm/gossie/) and thrift4go
+(https://github.com/pomack/thrift4go). Once everything is in place (and
+your GOPATH is set up correctly), all you need is `go build`. That'll
+give you a statically-linked binary runnable on any machine with the
+same architecture (binary format and word size). 
+
+usage
+=====
+
+`hecuna -hosts="host0:9160,host1:9610" -poolsize=10 -rowcount=10000`
