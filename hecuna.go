@@ -50,10 +50,11 @@ readStartDelay int, keyspace string, columnfamily string) (int64, int64, int64, 
 		if err != nil {
 			exitMsg(fmt.Sprint("Mapping SNP - ", err))
 		}
+	//	pool.Writer().Delete(columnfamily, []byte(snp.GeneID))
 		mutation := pool.Writer().Insert(columnfamily, snpRow)
 		err = mutation.Run()
 		if err != nil {
-			exitMsg(fmt.Sprint("Write - ", err))
+			fmt.Println(fmt.Sprint("Write - ", err))
 		}
 	}
 	endWriteTime := time.Now().UTC()
@@ -64,7 +65,7 @@ readStartDelay int, keyspace string, columnfamily string) (int64, int64, int64, 
 		query := pool.Query(mapping)
 		result, readErr := query.Get(snp.GeneID)
 		if readErr != nil {
-			exitMsg(fmt.Sprint("Read - ", readErr))
+			fmt.Println(fmt.Sprint("Read - ", readErr))
 		}
 		for {
 			readSnp := &SNP{}
