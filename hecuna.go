@@ -32,8 +32,14 @@ func exitMsg(msg string) {
 }
 
 
-func benchmark(pool gossie.ConnectionPool, recordCount int,
-readStartDelay int, keyspace string, columnfamily string) (int64, int64, int64, int64) {
+func benchmarkCassandra(hosts []string, recordCount int,
+poolSize int, keyspace string, columnfamily string) (int64, int64, int64, int64) {
+	poolOptions := gossie.PoolOptions{Size: poolSize, Timeout: 3000}
+	pool, err := gossie.NewConnectionPool(hosts, keyspace, poolOptions)
+	if err != nil {
+		exitMsg(fmt.Sprint("Connecting: ", err))
+	}
+
 	importSnps := make([]*SNP, recordCount)
 	for i := 0; i < recordCount; i++ {
 		importSnps[i] = genSNP()
@@ -81,27 +87,47 @@ readStartDelay int, keyspace string, columnfamily string) (int64, int64, int64, 
 	return nsRead, nsWrite, avgRead, avgWrite
 }
 
+type BackendFunc func([]string, int, int, string, string)(int64, int64, int64, int64)
+
 func main() {
 	rand.Seed(time.Now().UTC().UnixNano())
+
+	backends := map[string]BackendFunc{
+		"cassandra": benchmarkCassandra,
+	}
 
 	hostList := flag.String("hosts", "localhost:9160","Comma-separated list of host:port pairs, e.g., localhost:9160,otherhost:9161")
 	rowCount := flag.Int("rowcount", 1000, "Number of rows to write")
 	keySpace := flag.String("keyspace", "hecunatest", "Name of keyspace to write to")
 	colFamily := flag.String("colfamily", "snps", "Name of column family to write to")
 	poolSize := flag.Int("poolsize", 50, "Number of connections in connection pool")
-	readDelay := flag.Int("readdelay", 0, "Time to wait, in milliseconds, between completing writing data and beginning to read it back")
+
+	flag.Usage = func() {
+		backendList := ""
+		for k := range backends {
+			backendList += fmt.Sprintf("\t%s\n", k)
+		}
+		helpMessage := "hecuna: bringing clustered Java apps to their knees\n" +
+			fmt.Sprintf("Usage: %s <backend> [options]\n\n", os.Args[0]) +
+			"Backends:\n" +
+			backendList +
+			"\n" +
+			"Options:\n\n"
+		fmt.Fprintf(os.Stderr, helpMessage)
+		flag.PrintDefaults()
+	}
 
 	flag.Parse()
 
-	hosts := strings.Split(*hostList, ",")
-	poolOptions := gossie.PoolOptions{Size: *poolSize, Timeout: 3000}
-
-	pool, err := gossie.NewConnectionPool(hosts, *keySpace, poolOptions)
-	if err != nil {
-		exitMsg(fmt.Sprint("Connecting: ", err))
+	if flag.NArg() == 0 {
+		flag.Usage()
+		os.Exit(1)
 	}
+	backend := flag.Arg(0)
 
-	tRead, tWrite, avgRead, avgWrite := benchmark(pool, *rowCount, *readDelay, *keySpace,
+	hosts := strings.Split(*hostList, ",")
+
+	tRead, tWrite, avgRead, avgWrite := backends[backend](hosts, *rowCount, *poolSize, *keySpace,
 *colFamily)
 	avgWriteSeconds := float64(avgWrite) / float64(1000000000)
 	avgReadSeconds := float64(avgRead) / float64(1000000000)
