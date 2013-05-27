@@ -69,7 +69,7 @@ func main() {
 	hosts := strings.Split(*hostList, ",")
 
 	var engine StorageEngine
-
+	
 	switch backend {
 		case "cassandra":
 			engine = NewCassandraEngine(hosts, *poolSize, *keySpace, *colFamily)
