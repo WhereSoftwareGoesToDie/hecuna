@@ -12,29 +12,29 @@ func TestGossie(t *testing.T) {
 	pool, err :=
 gossie.NewConnectionPool([]string{"127.0.0.1:9160"}, keyspace, gossie.PoolOptions{Size: 1, Timeout: 30000})
 	if err != nil {
-		exitMsg(fmt.Sprint("Connecting: ", err))
+		ExitMsg(fmt.Sprint("Connecting: ", err))
 	}
 	fmt.Println("Connected to keyspace ", keyspace)
 
 	var mapping, mappingErr = gossie.NewMapping(&SNP{})
 	if mappingErr != nil {
-		exitMsg(fmt.Sprint("mapping: ", mappingErr))
+		ExitMsg(fmt.Sprint("mapping: ", mappingErr))
 	}
 
 	var snpObj = &SNP{"testkey", "does nothing", "C", "CAT"}
 	var testSNP, mapErr = mapping.Map(snpObj)
 	if mapErr != nil {
-		exitMsg("Can't map value.")
+		ExitMsg("Can't map value.")
 	}
 	err = pool.Writer().Insert(colspace, testSNP).Run()
 	if err != nil {
-		exitMsg(fmt.Sprint("Couldn't write: ", err))
+		ExitMsg(fmt.Sprint("Couldn't write: ", err))
 	}
 	fmt.Println("Connected.")
 	var query = pool.Query(mapping)
 	var ret, readErr = query.Get(12)
 	if readErr != nil {
-		exitMsg(fmt.Sprint("Couldn't read: ", readErr))
+		ExitMsg(fmt.Sprint("Couldn't read: ", readErr))
 	}
 	for {
 		res_snp := &SNP{}

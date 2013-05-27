@@ -3,7 +3,7 @@ hecuna
 
 hecuna is a clustered-datastore loadtesting/benchmarking tool. At the 
 moment it's alpha-quality, but still usable if you don't mind a little 
-pain. Written by sio; let me know if you encounter any problems.
+pain. Written by Sharif Olorin/fractalcat.
 
 It's built around a record generator that produces data resembling
 single nucleotide polymorphisms (SNPs), as IMO it's a pretty typical
@@ -22,12 +22,18 @@ example) and update the flag parser in hecuna.go.
 building
 ========
 
-You'll need a working go 1.1 installation, plus gossie
-(https://github.com/carloscm/gossie/) and thrift4go
-(https://github.com/pomack/thrift4go). Once everything is in place (and
-your GOPATH is set up correctly), all you need is `go build`. That'll
-give you a statically-linked binary runnable on any machine with the
-same architecture (binary format and word size). 
+You'll need a working go 1.1 installation, plus dependencies (below).
+Once everything is in place (and your GOPATH is set up correctly), all 
+you need is `go build`. That'll give you a statically-linked binary 
+runnable on any machine with the same architecture (binary format and 
+word size). 
+
+dependencies
+============
+
+ - gossie (https://github.com/carloscm/gossie/) 
+ - thrift4go (https://github.com/pomack/thrift4go)
+ - elastigo (https://github.com/mattbaird/elastigo)
 
 usage
 =====
@@ -35,5 +41,4 @@ usage
 `hecuna -hosts="host0:9160,host1:9610"  -rowcount=10000 cassandra`
 
 `hecuna -index=snps  -rowcount=10000 elasticsearch`
-
 
