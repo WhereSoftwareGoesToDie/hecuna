@@ -67,3 +67,10 @@ func genSNP() *SNP {
 }
 
 
+func GenSNPDataset(n int) ([]*SNP) {
+	dataset := make([]*SNP, n)
+        for i := 0; i < n; i++ {
+                dataset[i] = genSNP()
+	}
+	return dataset
+}
