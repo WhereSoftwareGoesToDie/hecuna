@@ -3,7 +3,7 @@ hecuna
 
 hecuna is a clustered-datastore loadtesting/benchmarking tool. At the 
 moment it's alpha-quality, but still usable if you don't mind a little 
-pain. Written by Sharif Olorin/fractalcat.
+pain. Written by Sharif Olorin/fractalcat as an aid in performance tuning. 
 
 It's built around a record generator that produces data resembling
 single nucleotide polymorphisms (SNPs), as IMO it's a pretty typical
