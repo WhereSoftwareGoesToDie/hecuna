@@ -26,7 +26,7 @@ func (e *ElasticsearchEngine) Benchmark(recordCount int) (BenchmarkData) {
 
 	startWriteTime := time.Now().UTC()
 
-	for i, snp := range dataset {
+	for _, snp := range dataset {
 		_, _ = core.Index(true, e.index, e.datatype, snp.GeneID, snp)
 	}
 	endWriteTime := time.Now().UTC()
