@@ -1,9 +1,23 @@
 hecuna
 ======
 
-hecuna is a Cassandra loadtesting/benchmarking tool. At the moment it's
-pre-alpha-quality, but still usable if you don't mind a little pain.
-Written by sio; let me know if you encounter any problems.
+hecuna is a clustered-datastore loadtesting/benchmarking tool. At the 
+moment it's alpha-quality, but still usable if you don't mind a little 
+pain. Written by sio; let me know if you encounter any problems.
+
+It's built around a record generator that produces data resembling
+single nucleotide polymorphisms (SNPs), as IMO it's a pretty typical
+usecase for large clustered databases and KVSes, and is easily
+extensible to map-reduce and aggregation benchmarking. It uses random
+strings as document values, and shorter random strings as keys.
+
+backends
+========
+
+hecuna currently supports benchmarks against Cassandra and
+Elasticsearch. If you want to add a new backend, define a type
+implementing the StorageEngine interface (look at cassandra.go for an
+example) and update the flag parser in hecuna.go.
 
 building
 ========
@@ -18,4 +32,8 @@ same architecture (binary format and word size).
 usage
 =====
 
-`hecuna -hosts="host0:9160,host1:9610" -poolsize=10 -rowcount=10000`
+`hecuna -hosts="host0:9160,host1:9610"  -rowcount=10000 cassandra`
+
+`hecuna -index=snps  -rowcount=10000 elasticsearch`
+
+

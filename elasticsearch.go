@@ -27,13 +27,21 @@ func (e *ElasticsearchEngine) Benchmark(recordCount int) (BenchmarkData) {
 	startWriteTime := time.Now().UTC()
 
 	for _, snp := range dataset {
-		_, _ = core.Index(true, e.index, e.datatype, snp.GeneID, snp)
+		res, err := core.Index(true, e.index, e.datatype, snp.GeneID, snp)
+		_ = res
+		if err != nil {
+			ExitMsg(fmt.Sprint("Writing: ", err))
+		}
 	}
 	endWriteTime := time.Now().UTC()
 	startReadTime := time.Now().UTC()
 	for _, snp := range dataset {
 		qry := fmt.Sprintf("%v:%v", e.datatype, snp.Value)
-		_, _ = core.SearchUri(e.index, e.datatype, qry, "")
+		res, err := core.SearchUri(e.index, e.datatype, qry, "")
+		_ = res
+		if err != nil {
+			ExitMsg(fmt.Sprint("Searching: ", err))
+		}
 	}
 	endReadTime := time.Now().UTC()
 	summary := BenchmarkData{recordCount, startWriteTime, endWriteTime, startReadTime, endReadTime}
