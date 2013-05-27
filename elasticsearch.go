@@ -5,7 +5,6 @@ import (
 	"log"
 	"fmt"
 	"github.com/mattbaird/elastigo/core"
-	"rand"
 )
 
 var _ = log.Println
