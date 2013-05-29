@@ -54,27 +54,6 @@ func (bd BenchmarkData) String() string {
 	return summary
 }
 
-/*type BenchmarkSummary struct {
-	StartWriteTime int64
-	EndWriteTime int64
-	StartReadTime int64
-	EndReadTime int64
-	RecordCount int
-}*/
-
-/*func (b BenchmarkSummary) Report() (string) {
-	readTime := b.EndReadTime - b.StartReadTime
-	writeTime := b.EndWriteTime - b.StartWriteTime
-	avgRead := float64(readTime) / float64(b.RecordCount)
-	avgWrite := float64(writeTime) / float64(b.RecordCount)
-	avgWriteSeconds := float64(avgWrite) / float64(1000000000)
-	avgReadSeconds := float64(avgRead) / float64(1000000000)
-
-	report := fmt.Sprintf("Read time: %v\n\tAverage (seconds): %v\nWrite time: %v\n\tAverage (seconds): %v\n",  readTime, avgReadSeconds, writeTime, avgWriteSeconds)
-
-	return report
-}*/
-
 type StorageEngine interface {
 	Benchmark(recordCount int) BenchmarkData
 }
