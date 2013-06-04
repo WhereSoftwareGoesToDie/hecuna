@@ -1,0 +1,10 @@
+#! /bin/bash
+
+curl -XPUT "http://localhost:9200/snps/" -d '{
+    "settings" : {
+        "index" : {
+            "number_of_shards" : 50,
+            "number_of_replicas" : 1
+        }
+    }
+}'

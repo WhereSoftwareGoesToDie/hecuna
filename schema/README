@@ -1,0 +1,3 @@
+Just a couple of basic benchmark schemas for each backend if you need a
+starting place; you'll almost certainly want to modify these, but they
+-should- work with the defaults out-of-the-box. 

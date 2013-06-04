@@ -1,16 +1,5 @@
 /*
-hecuna - Cassandra testing and benchmarking tool
-
-Usage:
-
-hecuna [options]
-
-Options:
-
-	keyspace (hecunatest)
-	columnfamily (snps)
-	rowcount (1000)
-	hostlist (localhost:9160) (comma-separated host:port pairs)
+hecuna - cluster benchmarking and loadtesting tool
 */
 
 package main
