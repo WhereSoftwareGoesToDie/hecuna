@@ -35,6 +35,9 @@ dependencies
  - thrift4go (https://github.com/pomack/thrift4go)
  - elastigo (https://github.com/mattbaird/elastigo)
 
+Versions of these dependencies verified to build with hecuna have been forked and 
+included as submodules; use the authors' HEAD at your own risk.
+
 usage
 =====
 

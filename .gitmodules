@@ -1,0 +1,9 @@
+[submodule "elastigo"]
+	path = elastigo
+	url = git://github.com/anchor/elastigo
+[submodule "thrift4go"]
+	path = thrift4go
+	url = git://github.com/anchor/thrift4go
+[submodule "gossie"]
+	path = gossie
+	url = git://github.com/anchor/gossie
