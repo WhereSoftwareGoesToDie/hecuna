@@ -44,7 +44,6 @@ func (e *CassandraEngine) Benchmark(recordCount int) (BenchmarkData) {
 		if err != nil {
 			ExitMsg(fmt.Sprint("Mapping SNP - ", err))
 		}
-	//	pool.Writer().Delete(columnfamily, []byte(snp.GeneID))
 		mutation := e.pool.Writer().Insert(e.columnfamily, snpRow)
 		err = mutation.Run()
 		if err != nil {

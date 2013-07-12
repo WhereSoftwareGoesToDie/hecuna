@@ -5,10 +5,6 @@ import (
 	"fmt"
 )
 
-/*const (
-	NucleobaseChoices = [...]byte {\C, \A, \T, \G}
-)*/
-
 var NucleobaseChoices = []byte("CATG")
 
 type SNP struct {
