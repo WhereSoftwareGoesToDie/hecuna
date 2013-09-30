@@ -11,6 +11,10 @@ usecase for large clustered databases and KVSes, and is easily
 extensible to map-reduce and aggregation benchmarking. It uses random
 strings as document values, and shorter random strings as keys.
 
+It does not currently support any form of complex querying, and as such
+is mostly useful for filling a cluster up with a known quantity of data 
+and seeing what happens.
+
 backends
 ========
 
