@@ -38,7 +38,7 @@ func main() {
 			backendList += fmt.Sprintf("\t%s\n", k)
 		}
 		helpMessage := "hecuna: bringing clustered Java apps to their knees\n" +
-			fmt.Sprintf("Usage: %s <backend> [options]\n\n", os.Args[0]) +
+			fmt.Sprintf("Usage: %s [options] <backend>\n\n", os.Args[0]) +
 			"Backends:\n" +
 			backendList +
 			"\n" +
